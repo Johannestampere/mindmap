@@ -1,6 +1,10 @@
-fastapi
+fastapi~=0.115.12
 uvicorn[standard]
-SQLAlchemy
-alembic
+SQLAlchemy~=2.0.40
+alembic~=1.15.2
 psycopg2-binary
 python-dotenv
+
+pydantic-settings~=2.9.1
+supabase~=2.15.1
+python-jose[cryptography]
