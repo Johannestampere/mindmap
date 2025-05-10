@@ -1,15 +1,16 @@
-from pydantic import BaseSettings, AnyUrl # "BaseSettings" knows how to read ".env" and "AnyUrl" validates the URL
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
-# Configuration loaded from .env (environment variables)
 class Settings(BaseSettings):
-    DATABASE_URL: AnyUrl
+    model_config = SettingsConfigDict(env_file=".env")
+
+    DATABASE_URL: str
     SECRET_KEY: str
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
-    CORS_ORIGINS: str = ""
 
-    class Config:
-        env_file = ".env"
-        env_file_encoding = "utf-8"
+    # Supabase-specific
+    SUPABASE_URL: str
+    SUPABASE_SERVICE_ROLE_KEY: str
+    SUPABASE_ANON_KEY: str
+    SUPABASE_JWT_SECRET: str
 
-# Create settings object to be able to write "from app.core.config import settings" everywhere else
 settings = Settings()
