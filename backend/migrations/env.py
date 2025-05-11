@@ -7,7 +7,7 @@ from logging.config import fileConfig
 from sqlalchemy import engine_from_config, pool
 from alembic import context
 
-# 1) Make sure “app/” is on Python path so we can import your code
+# 1) Make sure "app/" is on Python path so we can import your code
 sys.path.append(os.getcwd())
 
 # 2) Import your settings and Base metadata
@@ -25,7 +25,8 @@ import app.models.vote
 config = context.config
 
 # Override the URL in alembic.ini with the one from .env
-config.set_main_option("sqlalchemy.url", settings.DATABASE_URL)
+# Use DIRECT_URL for migrations instead of DATABASE_URL
+config.set_main_option("sqlalchemy.url", settings.DIRECT_URL)
 
 # Interpret the config file for Python logging
 if config.config_file_name is not None:
@@ -33,6 +34,7 @@ if config.config_file_name is not None:
 
 # Link Alembic to your MetaData
 target_metadata = Base.metadata
+
 
 
 def run_migrations_offline() -> None:
