@@ -1,6 +1,7 @@
 import { loginEmail } from './loginEmail'
-import { signup } from './signup'
+import { signUp } from '../signup/signUp'
 import GoogleLoginButton from './GoogleLoginButton'
+import Link from 'next/link'
 
 export default function LoginPage() {
   return (
@@ -10,7 +11,7 @@ export default function LoginPage() {
       <label htmlFor="password">Password:</label>
       <input id="password" name="password" type="password" required />
       <button formAction={loginEmail}>Log in</button>
-      <button formAction={signup}>Sign up</button>
+      <Link href="/signup">Sign Up</Link>
       <GoogleLoginButton />
     </form>
   )
