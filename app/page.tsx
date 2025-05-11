@@ -4,8 +4,11 @@ import LoginButton from "./components/LoginButton";
 
 export default function LandingPage() {
   return (
-    <div>
-      <h1>landing page</h1>
+    <div className="items-center bg-gray-100">
+      <div>
+          <h1 className="text-2xl">landing page</h1>
+      </div>
+ 
       <LoginButton />
     </div>
   )

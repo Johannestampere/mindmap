@@ -1,5 +1,4 @@
 // This file is used to create a Supabase client for server-side rendering (SSR) in Next.js.
-
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 
