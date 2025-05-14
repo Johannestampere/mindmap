@@ -1,30 +1,30 @@
-"use client"
+"use client";
 
-import { createClient } from '@/utils/supabase/client'
-import { access } from 'fs'
-import { redirect } from 'next/navigation'
-import React from 'react'
+import { createClient } from '@/utils/supabase/client';
+import React from 'react';
 
 export default function GoogleLoginButton() {
   const handleGoogleLogin = async () => {
-      const supabase = await createClient()
-      await supabase.auth.signInWithOAuth({
-          provider: 'google',
-          options: {
-            redirectTo: `/auth/callback`,
-            queryParams: {
-              access_type: 'offline',
-              prompt: 'consent',
-            }
-          }
-      })
-  }
+    const supabase = createClient();
+    const redirectUrl = `${window.location.origin}/auth/callback?next=/dashboard`;
+
+    await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: redirectUrl,
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'consent',
+        },
+      },
+    });
+  };
 
   return (
     <div>
       <button onClick={handleGoogleLogin}>
-        google
+        Sign in with Google
       </button>
     </div>
-  )
+  );
 }
