@@ -16,7 +16,7 @@ from app.core.database import Base        # your declarative_base()
 
 # 3) Import all models so their tables are registered
 import app.models.user
-import app.models.session
+import app.models.mindmap
 import app.models.node
 import app.models.vote
 
