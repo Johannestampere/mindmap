@@ -8,14 +8,31 @@ import { createClient } from '@/utils/supabase/server'
 export async function signUp(formData: FormData) {
   const supabase = await createClient()
 
-  const data = {
-    email: formData.get('email') as string,
-    password: formData.get('password') as string,
+  const email = formData.get('email') as string
+  const password = formData.get('password') as string
+  const username = formData.get('username') as string
+
+  const { data: signUpData, error: error } = await supabase.auth.signUp({
+    email,
+    password,
+  })
+
+  if (error || !signUpData?.user) {
+    redirect('/error')
   }
 
-  const { error } = await supabase.auth.signUp(data)
+  // retrieve the user's ID from auth.users
+  const { id, email: userEmail } = signUpData.user
 
-  if (error) {
+  // insert the id, username, email into the users table under the same ID
+  const { error: dbError } = await supabase.from('usersTest').insert({
+    id, 
+    email: userEmail,
+    username,
+  })
+
+  if (dbError) {
+    console.error(dbError)
     redirect('/error')
   }
 

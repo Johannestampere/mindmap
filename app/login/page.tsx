@@ -3,8 +3,9 @@ import { signUp } from '../signup/signUp'
 import GoogleLoginButton from './GoogleLoginButton'
 import GithubLoginButton from './GithubLoginButton'
 import Link from 'next/link'
+import { JSX } from 'react'
 
-export default function LoginPage() {
+export default function LoginPage(): JSX.Element {
   return (
     <form>
       <label htmlFor="email">Email:</label>
