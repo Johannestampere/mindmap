@@ -24,15 +24,21 @@ export async function signUp(formData: FormData) {
   // retrieve the user's ID from auth.users
   const { id, email: userEmail } = signUpData.user
 
-  // insert the id, username, email into the users table under the same ID
-  const { error: dbError } = await supabase.from('usersTest').insert({
-    id, 
-    email: userEmail,
-    username,
+  // send userid, email, username to backend
+  const res = await fetch("/signup", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      id, // UUID
+      email: userEmail, // varchar
+      username, // varchar
+    }),
   })
 
-  if (dbError) {
-    console.error(dbError)
+  if (!res.ok) {
+    // handle error
     redirect('/error')
   }
 
