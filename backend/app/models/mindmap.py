@@ -5,9 +5,11 @@ from sqlalchemy.dialects.postgresql import UUID
 
 class MindMap(Base):
     __tablename__ = "mindmaps"
-    id         = Column(Integer, primary_key=True, index=True)
-    name       = Column(String, nullable=False)
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False)
+    created_by = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
-    creator = relationship("Profile", back_populates="mindmaps")
+    # Use string names for relationships
+    creator = relationship("User", back_populates="mindmaps")
     nodes = relationship("Node", back_populates="mindmap")
