@@ -25,7 +25,7 @@ export async function signUp(formData: FormData) {
   const { id, email: userEmail } = signUpData.user
 
   // send userid, email, username to backend
-  const res = await fetch("/signup", {
+  const res = await fetch("http://hfcs.csclub.uwaterloo.ca:8000/signup", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
