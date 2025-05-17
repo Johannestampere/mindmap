@@ -1,0 +1,23 @@
+07.05.25
+- Created backend branch
+- Created the backend skeleton
+- Created documentation file
+
+------------------------------
+
+08.05.25
+- Created and finished .env file
+- Created and finished .gitignore file
+- Finished config.py
+
+Specifications:
+
+.env and .gitignore:
+- Sensitive values are put into ".env" (Environment Variables) file, which is added to ".gitignore" so they never land in version control and stay secret
+- CORS needed because FastAPI uses localhost:8000, but Next.js uses localhost:3000
+- SECRET_KEY is for signatures and validating/verifying the token
+
+app/core/config.py:
+- Centralizes and validates all of the configuration
+- Defines what settings the app needs, their types and where to load them from (.env)
+- So that other modules can just use "from app.core.config import settings" and then "settings.DATABASE_URL" or "settings.SECRET_KEY"...
