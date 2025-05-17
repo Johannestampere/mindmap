@@ -142,7 +142,6 @@ def test_oauth_scenarios():
             if user_in_db:
                 session.delete(user_in_db)
         session.commit()
-
         return successful_tests == len(created_users)
 
     except Exception as e:

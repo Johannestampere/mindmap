@@ -12,6 +12,5 @@ class Vote(Base):
     node_id = Column(Integer, ForeignKey("nodes.id", ondelete="CASCADE"), primary_key=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
-    # Use string names for relationships
     user = relationship("User", back_populates="votes")
     node = relationship("Node", back_populates="votes")

@@ -1,5 +1,3 @@
-# migrations/env.py
-
 import os
 import sys
 from logging.config import fileConfig
@@ -7,38 +5,34 @@ from logging.config import fileConfig
 from sqlalchemy import engine_from_config, pool
 from alembic import context
 
-# 1) Make sure "app/" is on Python path so we can import your code
+# Make sure "app/" is on Python path
 sys.path.append(os.getcwd())
 
-# 2) Import your settings and Base metadata
+# Import settings and Base metadata
 from app.core.config import settings      # reads .env
-from app.core.database import Base        # your declarative_base()
+from app.core.database import Base
 
-# 3) Import all models so their tables are registered
+# Import all models -> tables are registered
 import app.models.user
 import app.models.mindmap
 import app.models.node
 import app.models.vote
 
-# this is the Alembic Config object, which provides
-# access to values within alembic.ini
+# Provides access to values within alembic.ini
 config = context.config
 
 # Override the URL in alembic.ini with the one from .env
-# Use DIRECT_URL for migrations instead of DATABASE_URL
 config.set_main_option("sqlalchemy.url", str(settings.DIRECT_URL))
 
 # Interpret the config file for Python logging
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
-# Link Alembic to your MetaData
+# Link Alembic to Metadata
 target_metadata = Base.metadata
 
-
-
 def run_migrations_offline() -> None:
-    """Run migrations in 'offline' mode without an Engine."""
+    """Run migrations without an engine"""
     url = config.get_main_option("sqlalchemy.url")
     context.configure(
         url=url,
@@ -51,7 +45,7 @@ def run_migrations_offline() -> None:
 
 
 def run_migrations_online() -> None:
-    """Run migrations in 'online' mode with an Engine."""
+    """Run migrations with an engine"""
     connectable = engine_from_config(
         config.get_section(config.config_ini_section, {}),
         prefix="sqlalchemy.",

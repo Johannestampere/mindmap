@@ -7,8 +7,6 @@ class Settings(BaseSettings):
     DIRECT_URL: str
     SECRET_KEY: str
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
-
-    # Supabase-specific
     SUPABASE_URL: str
     SUPABASE_SERVICE_ROLE_KEY: str
     SUPABASE_ANON_KEY: str

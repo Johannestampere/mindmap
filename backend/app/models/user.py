@@ -13,7 +13,6 @@ class User(Base):
     hashed_password = Column(String, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
-    # Relationships (keep these as they are)
     mindmaps = relationship("MindMap", back_populates="creator")
     nodes = relationship("Node", back_populates="creator")
     votes = relationship("Vote", back_populates="user")
