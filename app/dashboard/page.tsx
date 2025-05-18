@@ -14,7 +14,7 @@ export default async function Dashboard() {
   const userId = data.user.id
 
   // req: send user id to backend, get back all mindmap id's of that user
-  const res = await fetch("http://hfcs.csclub.uwaterloo.ca:8000/get_mindmaps", {
+  /*const res = await fetch("http://hfcs.csclub.uwaterloo.ca:8000/get_mindmaps", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -24,16 +24,20 @@ export default async function Dashboard() {
     }),
   })
 
-  const mindmaps = await res.json()
+  const mindmaps = await res.json()*/
 
-  return (
-    <div>
-      <h1 className="text-6xl">{data.user.email}</h1>
-      <ul>
+  /*
+        <ul>
           {mindmaps.map((mindmap: { id: string }) => (
             <li key={mindmap.id}>{mindmap.id}</li>
           ))}
       </ul>
+    */
+
+  return (
+    <div>
+      <h1 className="text-6xl">{data.user.email}</h1>
+      
       <LogOutButton />
     </div>
   )
