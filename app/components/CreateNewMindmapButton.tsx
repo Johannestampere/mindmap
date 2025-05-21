@@ -1,11 +1,12 @@
 "use client"
 
-import React, { JSX } from "react";
+import React, { JSX, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 
 export default function CreateNewMindMapButton(): JSX.Element {
     const router = useRouter()
+    const [name, setName] = useState<string>("")
 
     const handleCreateNewMindmap = async (): Promise<void> => {
         const supabase = createClient()
@@ -26,7 +27,10 @@ export default function CreateNewMindMapButton(): JSX.Element {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
+                // UUID of user
                 id: userId,
+                // Name of mindmap (varchar?)
+                name: name,
             }),
         })
 
@@ -37,8 +41,15 @@ export default function CreateNewMindMapButton(): JSX.Element {
     }
     
     return (
-        <div>
-            <button onClick={handleCreateNewMindmap}>Create new mindmap</button>
-        </div>
+        <form onSubmit={handleCreateNewMindmap}>
+            <input 
+                type="text"
+                placeholder="Enter new mindmap name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="border-2 border-black rounded-md"
+            />
+            <button>Create new mindmap</button>
+        </form>
     )
-}   
+}
