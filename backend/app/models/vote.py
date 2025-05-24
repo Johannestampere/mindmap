@@ -1,4 +1,3 @@
-# app/models/vote.py
 from sqlalchemy import Column, ForeignKey, DateTime, func
 from sqlalchemy.orm import relationship
 from backend.app.core.database import Base
