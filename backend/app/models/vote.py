@@ -1,7 +1,7 @@
 # app/models/vote.py
 from sqlalchemy import Column, ForeignKey, DateTime, func
 from sqlalchemy.orm import relationship
-from app.core.database import Base
+from backend.app.core.database import Base
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy import Integer
 

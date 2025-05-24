@@ -1,7 +1,7 @@
 # backend/app/core/supabase.py
 
 from supabase import create_client
-from app.core.config import settings
+from .config import settings
 
 # initialize the client once
 supabase = create_client(

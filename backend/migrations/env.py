@@ -9,14 +9,14 @@ from alembic import context
 sys.path.append(os.getcwd())
 
 # Import settings and Base metadata
-from app.core.config import settings      # reads .env
-from app.core.database import Base
+from backend.app.core.database import settings      # reads .env
+from backend.app.core.database import Base
 
 # Import all models -> tables are registered
-import app.models.user
-import app.models.mindmap
-import app.models.node
-import app.models.vote
+import backend.app.models.user
+import backend.app.models.mindmap
+import backend.app.models.node
+import backend.app.models.vote
 
 # Provides access to values within alembic.ini
 config = context.config
