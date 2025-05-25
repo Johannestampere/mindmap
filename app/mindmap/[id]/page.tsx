@@ -1,15 +1,4 @@
-'use client';
+import { createClient } from "@/utils/supabase/client"
+import { redirect } from "next/navigation"
+import React, { JSX } from "react"
 
-import React, { JSX } from 'react';
-import { useParams } from 'next/navigation';
-
-export default function Mindmap(): JSX.Element {
-    const params = useParams();
-    const id = params?.id;
-
-    return (
-        <div>
-            Mindmap ID: {id}
-        </div>
-    );
-}
