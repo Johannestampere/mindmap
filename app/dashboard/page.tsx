@@ -8,13 +8,16 @@ import DashboardClient from "./DashboardClient";
 export default async function Dashboard(): Promise<JSX.Element> {
   const supabase = await createClient();
 
+  // get user data from supabase once logged in
   const { data, error } = await supabase.auth.getUser()
+
   if (error || !data?.user) {
     redirect('/login')
   }
 
   const userId = data.user.id
 
+  // req: send userid to backend, get back username
   const resUsername = await fetch("http://hfcs.csclub.uwaterloo.ca:8000/get_username", {
     method: "POST",
     headers: {
@@ -25,9 +28,9 @@ export default async function Dashboard(): Promise<JSX.Element> {
     }),
   })
 
-  const username = await resUsername.json()
+  const { username }: { username: string } = await resUsername.json()
 
-  // req: send user id to backend, get back all mindmap id's of that user
+  // req: send user id to backend, get back all mindmap id's and names of that user
   const resMindmaps = await fetch("http://hfcs.csclub.uwaterloo.ca:8000/get_mindmaps", {
     method: "POST",
     headers: {
@@ -39,7 +42,7 @@ export default async function Dashboard(): Promise<JSX.Element> {
   })
 
   // res has to be a collection of this user's mindmaps id's and names
-  const mindmaps = await resMindmaps.json()
+  const mindmaps: { id: string; name: string }[] = await resMindmaps.json()
 
   return (
     <div>

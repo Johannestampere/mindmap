@@ -3,6 +3,7 @@
 "use client"
 
 import { create } from "zustand"
+import { persist } from "zustand/middleware"
 
 type UserState = {
   userId: string | null
@@ -17,16 +18,20 @@ type UserState = {
 }
 
 // Zustand store for user state management
-export const useUserStore = create<UserState>((set) => ({
-  // Initialize user state
-  userId: null,
-  email: null,
-  username: null,
+export const useUserStore = create<UserState>()(
+  persist(
+    (set) => ({
+      userId: null,
+      email: null,
+      username: null,
+      setUser: ({ userId, email, username }) =>
+        set({ userId, email, username }),
+      clearUser: () =>
+        set({ userId: null, email: null, username: null }),
+    }),
+    {
+      name: 'user-storage',
+    }
+  )
+)
 
-  // Functions to set and clear user state
-  setUser: ({ userId, email, username }) =>
-    set({ userId, email, username }),
-
-  clearUser: () =>
-    set({ userId: null, email: null, username: null }),
-}))
