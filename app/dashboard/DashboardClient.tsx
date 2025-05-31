@@ -9,7 +9,7 @@ type Props = {
     username: string
   }
 
-export default function DashboardClient({userId, email, username}: Props): null {
+export default function DashboardClient({ userId, email, username }: Props): null {
     const setUser = useUserStore((state) => state.setUser)
 
     useEffect(() => {
