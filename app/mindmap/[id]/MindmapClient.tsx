@@ -31,7 +31,7 @@ type Props = {
 }
 
 export default function MindmapClient({ mindmap }: Props) {
-  const setUser = useUserStore((s) => s.setUser)
+  const username = useUserStore((s) => s.username)
   const setMindmap = useMindmapStore((s) => s.setMindmap)
 
   useEffect(() => {
@@ -45,8 +45,8 @@ export default function MindmapClient({ mindmap }: Props) {
   }, [mindmap])
 
   return (
-    <div className="p-10">
-      <h1 className="font-bold">{mindmap.name}</h1>
+    <div>
+      mindmap graph goes here
     </div>
   )
 }
