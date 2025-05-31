@@ -36,11 +36,6 @@ export default async function MindmapPage({ params }: Params) {
 
   return (
     <MindmapClient
-      user={{
-        userId,
-        email: user.email!,
-        username,
-      }}
       mindmap={mindmapData}
     />
   )

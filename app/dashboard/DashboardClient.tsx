@@ -18,3 +18,9 @@ export default function DashboardClient({userId, email, username}: Props): null 
 
     return null
 }
+
+// any client side page can now get the userinfo from the store like:
+//  const { username } = useUserStore()
+// and when the user logs out, we need to do
+//  useUserStore.getState().clearUser()
+

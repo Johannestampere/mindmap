@@ -27,16 +27,14 @@ type Mindmap = {
 }
 
 type Props = {
-  user: User
   mindmap: Mindmap
 }
 
-export default function MindmapClient({ user, mindmap }: Props) {
+export default function MindmapClient({ mindmap }: Props) {
   const setUser = useUserStore((s) => s.setUser)
   const setMindmap = useMindmapStore((s) => s.setMindmap)
 
   useEffect(() => {
-    setUser(user)
     setMindmap({
       id: mindmap.id,
       name: mindmap.name,
@@ -44,7 +42,7 @@ export default function MindmapClient({ user, mindmap }: Props) {
       createdBy: mindmap.created_by,
       createdAt: mindmap.created_at,
     })
-  }, [user, mindmap])
+  }, [mindmap])
 
   return (
     <div className="p-10">
