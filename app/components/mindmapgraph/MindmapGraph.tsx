@@ -1,6 +1,5 @@
 "use client"
 
-import Node from "./Node";
 import { useMindmapStore } from "@/stores/mindmapStore";
 import { JSX } from "react";
 
@@ -16,7 +15,7 @@ export default function MindmapGraph(): JSX.Element {
 
     return (
         <div>
-            
+            graph component
         </div>
     )
 }
