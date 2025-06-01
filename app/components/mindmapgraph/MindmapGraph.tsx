@@ -15,7 +15,7 @@ export default function MindmapGraph(): JSX.Element {
 
     return (
         <div>
-            graph component
+            the actual graph
         </div>
     )
 }
