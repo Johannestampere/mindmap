@@ -3,19 +3,12 @@
 import { useEffect } from 'react'
 import { useUserStore } from '@/stores/userStore'
 import { useMindmapStore } from '@/stores/mindmapStore'
+import type { MindmapNode } from '@/stores/mindmapStore'
 
 type User = {
   userId: string
   email: string
   username: string
-}
-
-type MindmapNode = {
-  id: string
-  content: string
-  parentId: string | null
-  likedBy: string[]
-  children?: MindmapNode[]
 }
 
 type Mindmap = {

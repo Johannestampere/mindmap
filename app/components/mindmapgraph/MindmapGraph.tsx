@@ -5,7 +5,6 @@
 
 import { useMindmapStore } from "@/stores/mindmapStore";
 import { JSX } from "react";
-import * as d3 from "d3";
 
 
 export default function MindmapGraph(): JSX.Element {

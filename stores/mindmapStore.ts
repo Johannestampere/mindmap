@@ -2,7 +2,7 @@
 
 import { create } from 'zustand'
 
-type MindmapNode = {
+export type MindmapNode = {
   id: string
   mindmapId: string
   content: string
