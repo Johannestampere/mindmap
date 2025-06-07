@@ -23,4 +23,3 @@ export default function DashboardClient({ userId, email, username }: Props): nul
 //  const { username } = useUserStore()
 // and when the user logs out, we need to do
 //  useUserStore.getState().clearUser()
-

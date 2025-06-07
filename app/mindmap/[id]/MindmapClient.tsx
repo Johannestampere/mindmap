@@ -5,28 +5,22 @@ import { useUserStore } from '@/stores/userStore'
 import { useMindmapStore } from '@/stores/mindmapStore'
 import type { MindmapNode } from '@/stores/mindmapStore'
 
-type User = {
-  userId: string
-  email: string
-  username: string
-}
-
 type Mindmap = {
   id: string
   name: string
   created_by: string
   created_at: string
   nodes: MindmapNode[]
-}
+};
 
 type Props = {
   mindmap: Mindmap
-}
+};
 
 export default function MindmapClient({ mindmap }: Props) {
-  const username = useUserStore((s) => s.username)
-  const setMindmap = useMindmapStore((s) => s.setMindmap)
+  const setMindmap = useMindmapStore((s) => s.setMindmap);
 
+  {/* after initial render, store the server-passed mindmap into the Zustand store for global client-side access */}
   useEffect(() => {
     setMindmap({
       id: mindmap.id,
@@ -35,7 +29,7 @@ export default function MindmapClient({ mindmap }: Props) {
       createdBy: mindmap.created_by,
       createdAt: mindmap.created_at,
     })
-  }, [mindmap])
+  }, [mindmap]);
 
   return (
     <div>

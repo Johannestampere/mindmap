@@ -4,7 +4,7 @@ import LoginButton from "./components/LoginButton";
 
 export default function LandingPage() {
   return (
-    <div className="items-center bg-gray-100">
+    <div className="items-center bg-gray-100 justify-center">
       <div>
           <h1 className="text-2xl">landing page</h1>
       </div>
