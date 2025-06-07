@@ -4,6 +4,7 @@ import { useEffect } from 'react'
 import { useUserStore } from '@/stores/userStore'
 import { useMindmapStore } from '@/stores/mindmapStore'
 import type { MindmapNode } from '@/stores/mindmapStore'
+import AddNodeForm from '@/app/components/AddNodeForm'
 
 type Mindmap = {
   id: string
@@ -19,6 +20,8 @@ type Props = {
 
 export default function MindmapClient({ mindmap }: Props) {
   const setMindmap = useMindmapStore((s) => s.setMindmap);
+  const nodes = useMindmapStore((s) => s.nodes);
+  const setActiveNode = useMindmapStore((s) => s.setActiveNode);
 
   {/* after initial render, store the server-passed mindmap into the Zustand store for global client-side access */}
   useEffect(() => {
@@ -33,7 +36,18 @@ export default function MindmapClient({ mindmap }: Props) {
 
   return (
     <div>
-      mindmap graph goes here
+      {nodes.map((node) => (
+        <div
+        key={node.id}
+        style={{ position: 'absolute', left: node.x, top: node.y }}
+        onClick={() => setActiveNode(node.id)}
+        >
+        {node.content}
+        </div>
+      ))}
+
+      <AddNodeForm mindmapId={mindmap.id} />
+
     </div>
   )
 }
