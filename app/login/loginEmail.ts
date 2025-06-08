@@ -5,12 +5,10 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/utils/supabase/server'
 
-
-// this is the login function
 // the form is in a separate file, and we gotta use specific tags on the html elements for supabase to work
 export async function loginEmail(formData: FormData) {
     // creates a supabase client on the server
-    const supabase = await createClient()
+    const supabase = await createClient();
   
     // gets the email and password from the form data
     const identifier = formData.get('identifier') as string;
@@ -35,19 +33,14 @@ export async function loginEmail(formData: FormData) {
       email = data.email;
     }
 
-    const { error } = await supabase.auth.signInWithPassword({ email, password: password })
-  
-    // getUser(): Gets the current user details if there is an existing session. This method performs a network request 
-    // to the Supabase Auth server, so the returned value is authentic and can be used to base authorization rules on.
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
-    const { data: { user }, error: userError } = await supabase.auth.getUser()
-
-    if (!user || userError) {
-        redirect('/error')
+    if (error || !data?.user) {
+      redirect('/error');
     }
   
     // tells nextjs to refresh the cache for the layout page
-    revalidatePath('/', 'layout')
+    revalidatePath('/', 'layout');
     // if nothing went wrong, redirects to the dashboard page
-    redirect('/dashboard')
+    redirect('/dashboard');
 }
