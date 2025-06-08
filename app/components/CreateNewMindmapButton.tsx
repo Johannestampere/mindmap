@@ -30,7 +30,8 @@ export default function CreateNewMindmapButton(): JSX.Element {
         },
         body: JSON.stringify({ 
           id: userId,
-          name: newMindmapName,
+          title: newMindmapName,
+          created
         }),
       });
 
@@ -39,6 +40,7 @@ export default function CreateNewMindmapButton(): JSX.Element {
       }
 
       const mindmapId = await res.json();
+
       router.push(`/mindmap/${mindmapId}`);
     } catch (e) {
       console.error("error creating mindmap: ", e);

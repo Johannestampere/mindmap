@@ -24,7 +24,7 @@ export default async function MindmapPage({ params }: Params) {
   const username = usernameRes.json();
 
   // get all mindmap data for the user
-  const mindmapRes = await fetch('http://hfcs.csclub.uwaterloo.ca:8000/get_mindmap', {
+  const mindmapRes = await fetch('http://hfcs.csclub.uwaterloo.ca:8000/get_mindmap_data', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ mindmapId: params.mindmapId }),
@@ -32,7 +32,7 @@ export default async function MindmapPage({ params }: Params) {
 
   if (!mindmapRes.ok) redirect('/dashboard');
 
-  // fetch mindmap's data: {id, name, nodes, createdBy, createdAt}
+  // fetch mindmap's data: {id, title, nodes, createdBy, createdAt}
   const mindmapData = await mindmapRes.json();
 
   return (
