@@ -1,9 +1,10 @@
 'use client'
 
-import { useEffect } from 'react'
+import { use, useEffect } from 'react'
 import { useMindmapStore } from '@/stores/mindmapStore'
 import type { MindmapNode } from '@/stores/mindmapStore'
 import AddNodeForm from '@/app/components/AddNodeForm'
+import { supabase } from '@/utils/supabase/client'
 
 type Mindmap = {
   id: string
@@ -33,6 +34,50 @@ export default function MindmapClient({ mindmap }: Props) {
       createdAt: mindmap.created_at,
     })
   }, [mindmap]);
+
+  // Realtime sync
+  useEffect(() => {
+    const channel = supabase
+      .channel('mindmap-realtime') // opens a new Realtime channel w/ an ID
+      .on(
+        'postgres_changes', // listen to correct changes
+        {
+          event: '*', // listen to all three events
+          schema: 'public',
+          table: 'nodes',
+          filter: `mindmap_id=eq.${mindmap.id}`, // only receive changes for these nodes. eq => equals
+        },
+        (payload: any) => { // every change, supabase sends a payload, which includes metadata and the old/new row
+          const { eventType, new: newNode, old: oldNode } = payload;
+  
+          if (eventType === 'INSERT') {
+            useMindmapStore.setState((s) => ({
+              nodes: [...s.nodes, newNode],
+            }));
+          }
+  
+          if (eventType === 'UPDATE') {
+            useMindmapStore.setState((s) => ({
+              nodes: s.nodes.map((node) =>
+                node.id === newNode.id ? newNode : node
+              ),
+            }));
+          }
+  
+          if (eventType === 'DELETE') {
+            useMindmapStore.setState((state) => ({
+              nodes: state.nodes.filter((node) => node.id !== oldNode.id),
+            }));
+          }
+        }
+      )
+      .subscribe();
+  
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [mindmap.id]);
+  
 
   return (
     <div>

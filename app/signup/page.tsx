@@ -1,6 +1,4 @@
 import React from "react";
-import { redirect } from "next/navigation";
-import { createClient } from "@/utils/supabase/server";
 import { signUp } from "./signUp";
 import { JSX } from "react";
 

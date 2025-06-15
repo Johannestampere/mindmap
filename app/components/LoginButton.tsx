@@ -1,13 +1,12 @@
 'use client'
 
 import { useRouter } from "next/navigation"
-import { createClient } from "@/utils/supabase/client"
+import { supabase } from "@/utils/supabase/client"
 
 export default function LoginButton() {
   const router = useRouter();
 
   const handleClick = async () => {
-    const supabase = createClient();
     
     // gets the user's data for the first time
     const { data: { session } } = await supabase.auth.getSession();
