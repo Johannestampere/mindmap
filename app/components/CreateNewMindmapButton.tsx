@@ -31,7 +31,6 @@ export default function CreateNewMindmapButton(): JSX.Element {
         body: JSON.stringify({ 
           id: userId,
           title: newMindmapName,
-          created
         }),
       });
 

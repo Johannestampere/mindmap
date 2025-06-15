@@ -33,8 +33,8 @@ export default async function Dashboard(): Promise<JSX.Element> {
   const mindmaps: { id: string; title: string }[] = await resMindmaps.json();
 
   if (!resMindmaps.ok) {
-    alert("error with route /get_all_mindmaps")
-    redirect("/error")
+    alert("error with route /get_all_mindmaps");
+    redirect("/error");
   }
 
   return (

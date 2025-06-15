@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect } from 'react'
-import { useUserStore } from '@/stores/userStore'
 import { useMindmapStore } from '@/stores/mindmapStore'
 import type { MindmapNode } from '@/stores/mindmapStore'
 import AddNodeForm from '@/app/components/AddNodeForm'
@@ -18,6 +17,7 @@ type Props = {
   mindmap: Mindmap
 };
 
+// gets all the mindmap info from the server-side page.tsx
 export default function MindmapClient({ mindmap }: Props) {
   const setMindmap = useMindmapStore((s) => s.setMindmap);
   const nodes = useMindmapStore((s) => s.nodes);
