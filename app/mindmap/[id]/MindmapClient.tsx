@@ -7,6 +7,7 @@ import AddNodeForm from '@/app/components/AddNodeForm'
 import { supabase } from '@/utils/supabase/client'
 import * as d3 from "d3";
 import { hierarchy } from '@/utils/nodes/hierarchy'
+import { flattenTree } from '@/utils/nodes/flattenTree'
 
 type Mindmap = {
   id: string
@@ -80,7 +81,7 @@ export default function MindmapClient({ mindmap }: Props) {
     };
   }, [mindmap.id]);
 
-  // D3 tree stuff
+  // D3 tree stuff + sync the new layout to the backend
   useEffect(() => {
     if (nodes.length === 0) return;
 
@@ -105,10 +106,19 @@ export default function MindmapClient({ mindmap }: Props) {
       })
     })
 
+    // set the state in Zustand
     useMindmapStore.getState().setNodes(updatedNodes);
-  })
-  
 
+    const flattenedAgain = flattenTree(treeHierarchy);
+    const nodePayload = flattenedAgain.map(({id, x, y}) => ({id, x, y}));
+
+    fetch("http://hfcs.csclub.uwaterloo.ca:8000/update_node_positions", {
+      method: "POST",
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nodes: nodePayload }),
+    })
+  }, [nodes])
+  
   return (
     <div>
       {nodes.map((node) => (
