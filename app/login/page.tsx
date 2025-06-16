@@ -1,5 +1,4 @@
 import { loginEmail } from './loginEmail'
-import { signUp } from '../signup/signUp'
 import GoogleLoginButton from './GoogleLoginButton'
 import GithubLoginButton from './GithubLoginButton'
 import Link from 'next/link'

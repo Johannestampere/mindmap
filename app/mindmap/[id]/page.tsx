@@ -8,27 +8,17 @@ type Params = {
   params: { mindmapId: string }
 }
 
+// This server-side function gets the mindmap id from the parameters from page.tsx
 export default async function MindmapPage({ params }: Params) {
   const supabase = await createClient();
   const { data: { user }, error } = await supabase.auth.getUser();
 
   if (error || !user) redirect('/login');
-  
-  // get username from backend (why?)
-  const usernameRes = await fetch('http://hfcs.csclub.uwaterloo.ca:8000/get_username', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ id: user.id }),
-  })
 
-  const username = usernameRes.json();
-
-  // get all mindmap data for the user
-  const mindmapRes = await fetch('http://hfcs.csclub.uwaterloo.ca:8000/get_mindmap_data', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ mindmapId: params.mindmapId }),
-  })
+  // get all mindmap data for the user. frontend only sends the mindmap id
+  const mindmapRes = await fetch(`http://hfcs.csclub.uwaterloo.ca:8000/get_mindmap_data?id=${params.mindmapId}`, {
+    method: 'GET',
+  });
 
   if (!mindmapRes.ok) redirect('/dashboard');
 
@@ -40,3 +30,26 @@ export default async function MindmapPage({ params }: Params) {
     <MindmapClient mindmap={mindmapData} />
   );
 }
+
+/* THIS IS WHAT THE BACKEND RETURNS IN GET_MINDMAP_DATA
+
+{
+  "id": "123",
+  "name": "My Cool Mindmap",
+  "created_by": "user-uuid",
+  "created_at": "2025-06-15T17:00:00Z",
+  "nodes": [
+    {
+      "id": 1,
+      "mindmap_id": 123,
+      "parent_id": null,
+      "content": "My Cool Mindmap",
+      "created_by": "user-uuid",
+      "x": 400,
+      "y": 300
+    },
+    ...
+  ]
+}
+
+*/

@@ -1,11 +1,10 @@
 "use client";
 
-import { createClient } from '@/utils/supabase/client';
+import { supabase } from '@/utils/supabase/client';
 import React, { JSX } from 'react';
 
 export default function GoogleLoginButton(): JSX.Element {
   const handleGoogleLogin = async (): Promise<void> => {
-    const supabase = createClient();
     const redirectUrl = `${window.location.origin}/auth/callback?next=/dashboard`;
 
     await supabase.auth.signInWithOAuth({
