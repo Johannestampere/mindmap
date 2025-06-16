@@ -5,6 +5,8 @@ import { useMindmapStore } from '@/stores/mindmapStore'
 import type { MindmapNode } from '@/stores/mindmapStore'
 import AddNodeForm from '@/app/components/AddNodeForm'
 import { supabase } from '@/utils/supabase/client'
+import * as d3 from "d3";
+import { hierarchy } from '@/utils/nodes/hierarchy'
 
 type Mindmap = {
   id: string
@@ -77,6 +79,34 @@ export default function MindmapClient({ mindmap }: Props) {
       supabase.removeChannel(channel);
     };
   }, [mindmap.id]);
+
+  // D3 tree stuff
+  useEffect(() => {
+    if (nodes.length === 0) return;
+
+    // Use the hierarchy func to turn the flat nodes arr into a hierarchy
+    const treeHierarchy = hierarchy(nodes);
+    if (!treeHierarchy) return;
+
+    // Turn the tree into a D3 hierarchy
+    const d3root = d3.hierarchy(treeHierarchy);
+
+    // Create tree layout w/ a specific canvas size
+    const treeLayout = d3.tree<typeof treeHierarchy>().size([800, 600]);
+    treeLayout(d3root);
+
+    const updatedNodes: MindmapNode[] = [];
+
+    d3root.each((n) => {
+      updatedNodes.push({
+        ...n.data,
+        x: n.x!,
+        y: n.y!,
+      })
+    })
+
+    useMindmapStore.getState().setNodes(updatedNodes);
+  })
   
 
   return (
