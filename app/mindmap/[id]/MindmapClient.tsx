@@ -1,6 +1,6 @@
 'use client'
 
-import { use, useEffect } from 'react'
+import { use, useEffect, useState } from 'react'
 import { useMindmapStore } from '@/stores/mindmapStore'
 import type { MindmapNode } from '@/stores/mindmapStore'
 import AddNodeForm from '@/app/components/AddNodeForm'
@@ -22,6 +22,10 @@ type Props = {
   mindmap: Mindmap
 };
 
+type AIAnalysis = {
+  ideas: string[];
+}
+
 function LikeButton({ node }: { node: MindmapNode }) {
   const userId = useUserStore((s) => s.userId);
   const isLiked = node.likedBy.includes(userId || '');
@@ -39,7 +43,7 @@ function LikeButton({ node }: { node: MindmapNode }) {
     });
     
     if (!res.ok) {
-      alert('Error toggling like');
+      alert('Error liking node');
       return;
     }
   };
@@ -69,11 +73,87 @@ function LikeButton({ node }: { node: MindmapNode }) {
   );
 }
 
+function getNodeSubtree(node: MindmapNode, allNodes: MindmapNode[]): string[] {
+  const contents: string[] = [];
+  let currentNode = node;
+  
+  // Get all parent nodes up to root
+  while (currentNode.parentId) {
+    const parent = allNodes.find(n => n.id === currentNode.parentId);
+    if (parent) {
+      contents.unshift(parent.content); // Add parent content at the start
+      currentNode = parent;
+    } else {
+      break;
+    }
+  }
+
+  // Add current node's content at the end
+  contents.push(node.content);
+  
+  return contents;
+}
+
+function AIAnalysis({ node, nodes, onClose }: { node: MindmapNode, nodes: MindmapNode[], onClose: () => void }) {
+  const [ideas, setIdeas] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchAnalysis = async () => {
+      try {
+        const nodeContents = getNodeSubtree(node, nodes);
+        
+        const res = await fetch('http://hfcs.csclub.uwaterloo.ca:8000/analyze_node', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            nodeContents // arr of strs in root-to-leaf order
+          }),
+        });
+
+        if (!res.ok) throw new Error('error getting AI analysis');
+        
+        const data = await res.json();
+        setIdeas(data.ideas);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAnalysis();
+  }, [node.id, nodes]);
+
+  return (
+    <div style={{ position: 'fixed', right: 20, top: 20, width: 300, background: 'white', padding: 20, border: '1px solid #ccc' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
+        <div>Ideas for: {node.content}</div>
+        <button onClick={onClose}>×</button>
+      </div>
+
+      {loading ? (
+        <div>Loading AI ideas...</div>
+      ) : ideas.length > 0 ? (
+        <ul style={{ margin: 0, padding: 0, listStyle: 'disc', paddingLeft: 20 }}>
+          {ideas.map((idea, i) => (
+            <li key={i} style={{ marginBottom: 5 }}>{idea}</li>
+          ))}
+        </ul>
+      ) : (
+        <div>No ideas generated</div>
+      )}
+    </div>
+  );
+}
+
 // gets all the mindmap info from the server-side page.tsx
 export default function MindmapClient({ mindmap }: Props) {
   const setMindmap = useMindmapStore((s) => s.setMindmap);
   const nodes = useMindmapStore((s) => s.nodes);
   const setActiveNode = useMindmapStore((s) => s.setActiveNode);
+  const activeNodeId = useMindmapStore((s) => s.activeNodeId);
+  const [showAnalysis, setShowAnalysis] = useState(false);
 
   {/* after initial render, store the server-passed mindmap into the Zustand store for global client-side access */}
   useEffect(() => {
@@ -167,6 +247,10 @@ export default function MindmapClient({ mindmap }: Props) {
     })
   }, [nodes])
   
+  const handleNodeClick = (nodeId: string) => {
+    setActiveNode(nodeId);
+  };
+
   return (
     <div>
       {nodes.map((node) => (
@@ -179,7 +263,7 @@ export default function MindmapClient({ mindmap }: Props) {
             padding: '8px 16px',
             borderRadius: '8px',
             backgroundColor: 'white',
-            boxShadow: node.id === useMindmapStore.getState().activeNodeId 
+            boxShadow: node.id === activeNodeId 
               ? '0 0 15px 5px rgba(66, 153, 225, 0.5)' 
               : node.likedBy.length > 0
                 ? `0 0 ${Math.min(node.likedBy.length * 2, 10)}px rgba(239, 68, 68, 0.3)`
@@ -192,15 +276,53 @@ export default function MindmapClient({ mindmap }: Props) {
             alignItems: 'center',
             gap: '4px'
           }}
-          onClick={() => setActiveNode(node.id)}
+          onClick={() => handleNodeClick(node.id)}
+          onMouseEnter={(e) => {
+            const buttons = e.currentTarget.querySelector('div');
+            if (buttons) buttons.style.opacity = '1';
+          }}
+          onMouseLeave={(e) => {
+            const buttons = e.currentTarget.querySelector('div');
+            if (buttons) buttons.style.opacity = '0';
+          }}
         >
           <span>{node.content}</span>
-          <LikeButton node={node} />
+          <div style={{ 
+            display: 'flex', 
+            gap: '4px',
+            opacity: 0,
+            transition: 'opacity 0.2s ease-in-out'
+          }}>
+            <LikeButton node={node} />
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowAnalysis(true);
+              }}
+              style={{ 
+                padding: '2px 6px',
+                fontSize: '12px',
+                background: '#f0f0f0',
+                border: '1px solid #ccc',
+                borderRadius: '4px',
+                cursor: 'pointer'
+              }}
+            >
+              AI Ideas
+            </button>
+          </div>
         </div>
       ))}
 
-      <AddNodeForm mindmapId={mindmap.id} />
+      {showAnalysis && activeNodeId && (
+        <AIAnalysis
+          node={nodes.find(n => n.id === activeNodeId)!}
+          nodes={nodes}
+          onClose={() => setShowAnalysis(false)}
+        />
+      )}
 
+      <AddNodeForm mindmapId={mindmap.id} />
     </div>
   )
 }
