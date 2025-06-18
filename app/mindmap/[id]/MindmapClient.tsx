@@ -8,6 +8,7 @@ import { supabase } from '@/utils/supabase/client'
 import * as d3 from "d3";
 import { hierarchy } from '@/utils/nodes/hierarchy'
 import { flattenTree } from '@/utils/nodes/flattenTree'
+import { useUserStore } from '@/stores/userStore'
 
 type Mindmap = {
   id: string
@@ -20,6 +21,53 @@ type Mindmap = {
 type Props = {
   mindmap: Mindmap
 };
+
+function LikeButton({ node }: { node: MindmapNode }) {
+  const userId = useUserStore((s) => s.userId);
+  const isLiked = node.likedBy.includes(userId || '');
+  
+  const handleLike = async () => {
+    if (!userId) return;
+    
+    const res = await fetch('http://hfcs.csclub.uwaterloo.ca:8000/toggle_node_like', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        nodeId: node.id,
+        userId,
+      }),
+    });
+    
+    if (!res.ok) {
+      alert('Error toggling like');
+      return;
+    }
+  };
+
+  return (
+    <button
+      onClick={handleLike}
+      className={`ml-2 p-1 rounded-full transition-colors ${
+        isLiked ? 'text-red-500' : 'text-gray-400 hover:text-red-400'
+      }`}
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-4 w-4"
+        fill={isLiked ? 'currentColor' : 'none'}
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+        />
+      </svg>
+    </button>
+  );
+}
 
 // gets all the mindmap info from the server-side page.tsx
 export default function MindmapClient({ mindmap }: Props) {
@@ -123,11 +171,31 @@ export default function MindmapClient({ mindmap }: Props) {
     <div>
       {nodes.map((node) => (
         <div
-        key={node.id}
-        style={{ position: 'absolute', left: node.x, top: node.y }}
-        onClick={() => setActiveNode(node.id)}
+          key={node.id}
+          style={{ 
+            position: 'absolute', 
+            left: node.x, 
+            top: node.y,
+            padding: '8px 16px',
+            borderRadius: '8px',
+            backgroundColor: 'white',
+            boxShadow: node.id === useMindmapStore.getState().activeNodeId 
+              ? '0 0 15px 5px rgba(66, 153, 225, 0.5)' 
+              : node.likedBy.length > 0
+                ? `0 0 ${Math.min(node.likedBy.length * 2, 10)}px rgba(239, 68, 68, 0.3)`
+                : '0 2px 4px rgba(0, 0, 0, 0.1)',
+            transition: 'all 0.3s ease-in-out',
+            cursor: 'pointer',
+            border: '1px solid #e2e8f0',
+            transform: `scale(${1 + (node.likedBy.length * 0.05)})`,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '4px'
+          }}
+          onClick={() => setActiveNode(node.id)}
         >
-        {node.content}
+          <span>{node.content}</span>
+          <LikeButton node={node} />
         </div>
       ))}
 
