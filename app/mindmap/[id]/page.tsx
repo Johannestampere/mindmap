@@ -15,14 +15,14 @@ export default async function MindmapPage({ params }: Params) {
 
   if (error || !user) redirect('/login');
 
-  // get all mindmap data for the user. frontend only sends the mindmap id
+  // Get all mindmap data for the user. frontend only sends the mindmap id
   const mindmapRes = await fetch(`http://hfcs.csclub.uwaterloo.ca:8000/get_mindmap_data?id=${params.mindmapId}`, {
     method: 'GET',
   });
 
   if (!mindmapRes.ok) redirect('/dashboard');
 
-  // fetch mindmap's data: {id, title, nodes, createdBy, createdAt}
+  // Fetch mindmap's data: {id, title, nodes, createdBy, createdAt}
   const mindmapData = await mindmapRes.json();
 
   return (

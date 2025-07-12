@@ -5,6 +5,7 @@
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
 
+// TypeScript type for User State
 type UserState = {
   userId: string | null
   email: string | null
@@ -18,8 +19,9 @@ type UserState = {
 }
 
 // Zustand store for user state management
+// The User state is stored under the key 'user-storage'
 export const useUserStore = create<UserState>()(
-  persist(
+  persist (
     (set) => ({
       userId: null,
       email: null,
@@ -34,4 +36,3 @@ export const useUserStore = create<UserState>()(
     }
   )
 )
-

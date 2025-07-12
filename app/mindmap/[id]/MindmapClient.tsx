@@ -1,6 +1,6 @@
 'use client'
 
-import { use, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useMindmapStore } from '@/stores/mindmapStore'
 import type { MindmapNode } from '@/stores/mindmapStore'
 import AddNodeForm from '@/app/components/AddNodeForm'
@@ -9,7 +9,9 @@ import * as d3 from "d3";
 import { hierarchy } from '@/utils/nodes/hierarchy'
 import { flattenTree } from '@/utils/nodes/flattenTree'
 import { useUserStore } from '@/stores/userStore'
+import { JSX } from 'react'
 
+// TypeScript type for Mindmap
 type Mindmap = {
   id: string
   name: string
@@ -22,19 +24,22 @@ type Props = {
   mindmap: Mindmap
 };
 
+// TypeScript type for AI analysis results
 type AIAnalysis = {
   ideas: string[];
 }
 
+// Node Like button
 function LikeButton({ node }: { node: MindmapNode }) {
   const userId = useUserStore((s) => s.userId);
   const isLiked = node.likedBy.includes(userId || '');
   
   const handleLike = async () => {
     if (!userId) return;
-    
+
+    // POST request to like a node
     const res = await fetch('http://hfcs.csclub.uwaterloo.ca:8000/toggle_node_like', {
-      method: 'POST',
+      method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         nodeId: node.id,
@@ -73,41 +78,26 @@ function LikeButton({ node }: { node: MindmapNode }) {
   );
 }
 
-function getNodeSubtree(node: MindmapNode, allNodes: MindmapNode[]): string[] {
-  const contents: string[] = [];
-  let currentNode = node;
-  
-  // Get all parent nodes up to root
-  while (currentNode.parentId) {
-    const parent = allNodes.find(n => n.id === currentNode.parentId);
-    if (parent) {
-      contents.unshift(parent.content); // Add parent content at the start
-      currentNode = parent;
-    } else {
-      break;
-    }
-  }
-
-  // Add current node's content at the end
-  contents.push(node.content);
-  
-  return contents;
+// Function that returns content from Root to CurNode for the AI analysis
+async function getNodeSubtree(nodeId: string): Promise<string[]> {
+  const res = await fetch(`http://hfcs.csclub.uwaterloo.ca:8000/get_node_path?id=${nodeId}`);
+  const data = await res.json();
+  return data.nodeContents; // Array of strings in root-to-leaf order
 }
 
-function AIAnalysis({ node, nodes, onClose }: { node: MindmapNode, nodes: MindmapNode[], onClose: () => void }) {
+// Function that takes node id and displays AI analysis
+function AIAnalysis({ nodeId, onClose }: { nodeId: string, onClose: () => void }): JSX.Element {
   const [ideas, setIdeas] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchAnalysis = async () => {
       try {
-        const nodeContents = getNodeSubtree(node, nodes);
-        
         const res = await fetch('http://hfcs.csclub.uwaterloo.ca:8000/analyze_node', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            nodeContents // arr of strs in root-to-leaf order
+            nodeId: nodeId
           }),
         });
 
@@ -123,12 +113,12 @@ function AIAnalysis({ node, nodes, onClose }: { node: MindmapNode, nodes: Mindma
     };
 
     fetchAnalysis();
-  }, [node.id, nodes]);
+  }, [nodeId]);
 
   return (
     <div style={{ position: 'fixed', right: 20, top: 20, width: 300, background: 'white', padding: 20, border: '1px solid #ccc' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10 }}>
-        <div>Ideas for: {node.content}</div>
+        <div>Ideas for: {nodeId}</div>
         <button onClick={onClose}>×</button>
       </div>
 
@@ -147,7 +137,7 @@ function AIAnalysis({ node, nodes, onClose }: { node: MindmapNode, nodes: Mindma
   );
 }
 
-// gets all the mindmap info from the server-side page.tsx
+// Function to render Mindmap
 export default function MindmapClient({ mindmap }: Props) {
   const setMindmap = useMindmapStore((s) => s.setMindmap);
   const nodes = useMindmapStore((s) => s.nodes);
@@ -234,12 +224,13 @@ export default function MindmapClient({ mindmap }: Props) {
       })
     })
 
-    // set the state in Zustand
+    // Set the Mindmap state in Zustand
     useMindmapStore.getState().setNodes(updatedNodes);
 
     const flattenedAgain = flattenTree(treeHierarchy);
     const nodePayload = flattenedAgain.map(({id, x, y}) => ({id, x, y}));
 
+    // POST req to update Node x- and y-positions
     fetch("http://hfcs.csclub.uwaterloo.ca:8000/update_node_positions", {
       method: "POST",
       headers: { 'Content-Type': 'application/json' },
@@ -316,8 +307,7 @@ export default function MindmapClient({ mindmap }: Props) {
 
       {showAnalysis && activeNodeId && (
         <AIAnalysis
-          node={nodes.find(n => n.id === activeNodeId)!}
-          nodes={nodes}
+          nodeId={activeNodeId}
           onClose={() => setShowAnalysis(false)}
         />
       )}

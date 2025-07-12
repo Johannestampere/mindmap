@@ -2,6 +2,7 @@
 
 import { create } from 'zustand'
 
+// TypeScript type for a singular Node
 export type MindmapNode = {
   id: string
   mindmapId: string
@@ -36,7 +37,8 @@ type MindmapState = {
     resetMindmap: () => void
 }
 
-export const useMindmapStore = create<MindmapState>((set, get) => ({
+// Function to create a store for managaing Mindmap state
+export const useMindmapStore = create<MindmapState>((set) => ({
     id: null,
     name: null,
     nodes: [],
