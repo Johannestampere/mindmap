@@ -4,8 +4,14 @@ import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import MindmapClient from './MindmapClient'
 
+type Props = {
+  params: {
+    id: string;
+  };
+};
+
 // This server-side function gets the mindmap id from the dynamic route param 'id'
-export default async function MindmapPage({ params }: { params: { id: string } }) {
+export default async function MindmapPage({ params }: Props) {
   const supabase = await createClient();
   const { data: { user }, error } = await supabase.auth.getUser();
 
