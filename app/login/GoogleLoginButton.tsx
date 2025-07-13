@@ -5,7 +5,7 @@ import React, { JSX } from 'react';
 
 export default function GoogleLoginButton(): JSX.Element {
   const handleGoogleLogin = async (): Promise<void> => {
-    const redirectUrl = `${window.location.origin}/auth/callback?next=/dashboard`;
+    const redirectUrl = `https://mindmap-prod-five.vercel.app/auth/callback?next=/dashboard`;
 
     await supabase.auth.signInWithOAuth({
       provider: 'google',

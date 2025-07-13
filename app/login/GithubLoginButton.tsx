@@ -6,7 +6,7 @@ import { JSX } from 'react';
 
 export default function GithubLoginButton(): JSX.Element {
   const handleGithubLogin = async () => {
-    const redirectUrl = `${window.location.origin}/auth/callback?next=/dashboard`;
+    const redirectUrl = `https://mindmap-prod-five.vercel.app/auth/callback?next=/dashboard`;
 
     await supabase.auth.signInWithOAuth({
       provider: 'github',
