@@ -93,17 +93,19 @@ function AIAnalysis({ nodeId, onClose }: { nodeId: string, onClose: () => void }
   useEffect(() => {
     const fetchAnalysis = async () => {
       try {
+        const subtree: string[] = await getNodeSubtree(nodeId);
+
         const res = await fetch('http://hfcs.csclub.uwaterloo.ca:8000/analyze_node', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            nodeId: nodeId
+            subtree,
           }),
         });
 
         if (!res.ok) throw new Error('error getting AI analysis');
         
-        const data = await res.json();
+        const data: AIAnalysis = await res.json();
         setIdeas(data.ideas);
       } catch (error) {
         console.error(error);

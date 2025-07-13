@@ -1,4 +1,4 @@
-import Link from "next/link";
+
 import React from "react";
 import LoginButton from "./components/LoginButton";
 
@@ -8,7 +8,9 @@ export default function LandingPage() {
       <div>
           <h1 className="text-2xl">landing page</h1>
       </div>
- 
+
+      <h1>5x your team's ideation speed—try [NAME] today!</h1>
+
       <LoginButton />
     </div>
   )
