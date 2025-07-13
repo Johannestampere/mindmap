@@ -4,19 +4,15 @@ import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import MindmapClient from './MindmapClient'
 
-type Params = {
-  params: { mindmapId: string }
-}
-
-// This server-side function gets the mindmap id from the parameters from page.tsx
-export default async function MindmapPage({ params }: Params) {
+// This server-side function gets the mindmap id from the dynamic route param 'id'
+export default async function MindmapPage({ params }: { params: { id: string } }) {
   const supabase = await createClient();
   const { data: { user }, error } = await supabase.auth.getUser();
 
   if (error || !user) redirect('/login');
 
-  // Get all mindmap data for the user. frontend only sends the mindmap id
-  const mindmapRes = await fetch(`http://hfcs.csclub.uwaterloo.ca:8000/get_mindmap_data?id=${params.mindmapId}`, {
+  // get all mindmap data for the user. frontend only sends the mindmap id
+  const mindmapRes = await fetch(`http://hfcs.csclub.uwaterloo.ca:8000/get_mindmap_data?id=${params.id}`, {
     method: 'GET',
   });
 
