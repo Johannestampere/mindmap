@@ -14,11 +14,13 @@ class NodeBase(BaseModel):
     y_position: float
     parent_id: Optional[int] = None
 
+    @classmethod
     @field_validator('title')
-    def title_must_not_be_empty(self, v):
+    def title_must_not_be_empty(cls, v):
         if not v or not v.strip():
             raise ValueError('Title cannot be empty')
         return v.strip()
+
 
 
 class MindMapBase(BaseModel):
@@ -26,11 +28,13 @@ class MindMapBase(BaseModel):
     description: Optional[str] = None
     main_theme: Optional[str] = None
 
+    @classmethod
     @field_validator('title')
-    def title_must_not_be_empty(self, v):
+    def title_must_not_be_empty(cls, v):
         if not v or not v.strip():
             raise ValueError('Title cannot be empty')
         return v.strip()
+
 
 
 class VoteBase(BaseModel):
@@ -60,11 +64,13 @@ class NodeUpdate(BaseModel):
     y_position: Optional[float] = None
     parent_id: Optional[int] = None
 
+    @classmethod
     @field_validator('title')
-    def title_must_not_be_empty(self, v):
+    def title_must_not_be_empty(cls, v):
         if v is not None and (not v or not v.strip()):
             raise ValueError('Title cannot be empty')
         return v.strip() if v else v
+
 
 
 class MindMapUpdate(BaseModel):
@@ -72,11 +78,13 @@ class MindMapUpdate(BaseModel):
     description: Optional[str] = None
     main_theme: Optional[str] = None
 
+    @classmethod
     @field_validator('title')
-    def title_must_not_be_empty(self, v):
+    def title_must_not_be_empty(cls, v):
         if v is not None and (not v or not v.strip()):
             raise ValueError('Title cannot be empty')
         return v.strip() if v else v
+
 
 
 # RESPONSE SCHEMAS

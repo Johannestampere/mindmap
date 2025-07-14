@@ -53,11 +53,6 @@ async def create_mindmap(
         # Convert to response format
         response_data = {
             "id": mindmap_with_nodes.id,
-            "title": mindmap_with_nodes.name,  # Convert name -> title
-            "user_id": mindmap_with_nodes.created_by,
-            "nodes": [],
-            "total_collaborators": 1,
-            "created_at": mindmap_with_nodes.created_at
         }
 
         return MindMapResponse(**response_data)
@@ -71,7 +66,7 @@ async def create_mindmap(
 
 
 @router.get("/", response_model=List[MindMapListResponse])
-async def get_user_mindmaps(
+async def get_all_mindmaps(
         current_user_id: str = Depends(get_current_user_id),
         db: Session = Depends(get_db),
         skip: int = 0,
@@ -92,10 +87,10 @@ async def get_user_mindmaps(
 
             mindmap_dict = {
                 "id": mindmap.id,
-                "title": mindmap.name,  # Convert name -> title
-                "node_count": node_count,
-                "total_collaborators": 1,
-                "created_at": mindmap.created_at
+                "title": mindmap.name,
+                "node_count": node_count, # JOHANNESEL POLE
+                "total_collaborators": 1, # JOHANNESEL POLE
+                "created_at": mindmap.created_at # JOHANNESEL POLE
             }
             result.append(MindMapListResponse(**mindmap_dict))
 
@@ -109,7 +104,7 @@ async def get_user_mindmaps(
 
 
 @router.get("/{mindmap_id}", response_model=MindMapResponse)
-async def get_mindmap(
+async def get_mindmap_data(
         mindmap_id: int,
         current_user_id: str = Depends(get_current_user_id),
         db: Session = Depends(get_db)
@@ -154,9 +149,8 @@ async def get_mindmap(
         response_data = {
             "id": mindmap.id,
             "title": mindmap.name,
-            "user_id": mindmap.created_by,
             "nodes": nodes_response,
-            "total_collaborators": 1,
+            "created_by": mindmap.created_by,
             "created_at": mindmap.created_at
         }
 
