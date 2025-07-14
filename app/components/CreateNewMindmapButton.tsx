@@ -2,21 +2,23 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { createMindmap } from "@/app/actions/createMindmap"
 import { useUserStore } from "@/stores/userStore"
-import { useMindmapStore } from "@/stores/mindmapStore"
 import React, { JSX } from 'react'
 
 export default function CreateNewMindmapButton(): JSX.Element {
   const router = useRouter();
+
+  // hydrate user
   const userId = useUserStore((state) => state.userId);
-  const [mindmapName, setMindmapname] = useState<string>('');
+
+  const [newMindmapName, setNewMindmapname] = useState<string>('');
   
   const handleCreateMindmap = async (e: React.FormEvent<HTMLFormElement>) => {
     // prevent default form submission
     e.preventDefault();
-    if (!mindmapName || !userId) {
-      alert("error: file is CreatenewMindmapButton.tsx");
+
+    if (!newMindmapName || !userId) {
+      alert("error: associated file is CreateNewMindmapButton.tsx");
       return;
     }
 
@@ -28,7 +30,7 @@ export default function CreateNewMindmapButton(): JSX.Element {
         },
         body: JSON.stringify({ 
           id: userId,
-          name: mindmapName,
+          title: newMindmapName,
         }),
       });
 
@@ -37,6 +39,7 @@ export default function CreateNewMindmapButton(): JSX.Element {
       }
 
       const mindmapId = await res.json();
+
       router.push(`/mindmap/${mindmapId}`);
     } catch (e) {
       console.error("error creating mindmap: ", e);
@@ -48,8 +51,8 @@ export default function CreateNewMindmapButton(): JSX.Element {
     <form onSubmit={handleCreateMindmap}>
       <input
         type='text'
-        value={mindmapName}
-        onChange={(e) => setMindmapname(e.target.value)}
+        value={newMindmapName}
+        onChange={(e) => setNewMindmapname(e.target.value)}
         required
         placeholder='Enter mindmap name'
       />

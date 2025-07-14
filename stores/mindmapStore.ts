@@ -2,12 +2,16 @@
 
 import { create } from 'zustand'
 
-type MindmapNode = {
+// TypeScript type for a singular Node
+export type MindmapNode = {
   id: string
+  mindmapId: string
   content: string
   parentId: string | null
   likedBy: string[]
   children?: MindmapNode[]
+  x: number
+  y: number
 }
 
 type MindmapState = {
@@ -30,11 +34,11 @@ type MindmapState = {
 
     setNodes: (nodes: MindmapNode[]) => void
     setActiveNode: (nodeId: string | null) => void
-    toggleLikeNode: (nodeId: string, userId: string) => void
     resetMindmap: () => void
 }
 
-export const useMindmapStore = create<MindmapState>((set, get) => ({
+// Function to create a store for managaing Mindmap state
+export const useMindmapStore = create<MindmapState>((set) => ({
     id: null,
     name: null,
     nodes: [],
@@ -58,20 +62,6 @@ export const useMindmapStore = create<MindmapState>((set, get) => ({
 
     setActiveNode: (nodeId) => {
         set({ activeNodeId: nodeId })
-    },
-
-    // see mingi bs ma pean seda muutma
-    toggleLikeNode: (nodeId, userId) => {
-        const nodes = get().nodes.map((node) => {
-            if (node.id === nodeId) {
-                const likedBy = node.likedBy.includes(userId)
-                    ? node.likedBy.filter((id) => id !== userId)
-                    : [...node.likedBy, userId]
-                return { ...node, likedBy }
-            }
-            return node
-        })
-        set({ nodes })
     },
 
     resetMindmap: () => {

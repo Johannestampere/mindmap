@@ -9,7 +9,7 @@ type Props = {
     username: string
   }
 
-export default function DashboardClient({userId, email, username}: Props): null {
+export default function DashboardClient({ userId, email, username }: Props): null {
     const setUser = useUserStore((state) => state.setUser)
 
     useEffect(() => {
@@ -23,4 +23,3 @@ export default function DashboardClient({userId, email, username}: Props): null 
 //  const { username } = useUserStore()
 // and when the user logs out, we need to do
 //  useUserStore.getState().clearUser()
-

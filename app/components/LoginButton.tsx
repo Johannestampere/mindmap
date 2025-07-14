@@ -1,19 +1,21 @@
 'use client'
 
 import { useRouter } from "next/navigation"
-import { createClient } from "@/utils/supabase/client"
+import { supabase } from "@/utils/supabase/client"
 
 export default function LoginButton() {
-  console.log("LoginButton clicked")
-  const router = useRouter()
+  const router = useRouter();
 
   const handleClick = async () => {
-    const supabase = createClient()
-    const { data: { session } } = await supabase.auth.getSession()
+    
+    // gets the user's data for the first time
+    const { data: { session } } = await supabase.auth.getSession();
 
+    // if the user has an active session, push directly to dashboard
     if (session) {
       router.push('/dashboard')
     } else {
+    // if the user has no active session, push to /login
       router.push('/login')
     }
   }
